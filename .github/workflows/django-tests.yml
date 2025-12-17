@@ -2,9 +2,9 @@ name: Django Tests
 
 on:
   push:
-    branches: [ main ]
+    branches: [ main, master ]  # Добавил и master, и main — на всякий случай
   pull_request:
-    branches: [ main ]
+    branches: [ main, master ]
 
 jobs:
   test:
@@ -47,12 +47,3 @@ jobs:
       env:
         DATABASE_URL: postgres://postgres:postgres@localhost:5432/postgres
       run: python manage.py test shop.tests
-
-    - name: Upload test results (optional)
-      if: always()
-      uses: actions/upload-artifact@v3
-      with:
-        name: test-results
-        path: |
-          *.html
-          *.xml
