@@ -13,10 +13,10 @@ jobs:
       postgres:
         image: postgres:15
         env:
+          POSTGRES_PASSWORD: postgres
+          POSTGRES_DB: test_db  # Создаём базу test_db
           POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: ""  # Пустой пароль
-          POSTGRES_DB: postgres
-          POSTGRES_HOST_AUTH_METHOD: trust  # Ключевая строка! Отключает пароль
+          POSTGRES_HOST_AUTH_METHOD: trust  # Без пароля — безопасно в CI
         ports:
           - 5432:5432
         options: >-
@@ -37,15 +37,11 @@ jobs:
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install -r requirements.txt psycopg2-binary  # psycopg2-binary на случай проблем
+        pip install -r requirements.txt psycopg2-binary
 
-    - name: Run migrations
-      run: python manage.py migrate
+    - name: Run migrations and tests
       env:
-        DATABASE_URL: postgres://postgres@localhost:5432/postgres
-
-    - name: Run tests
-      run: python manage.py test shop.tests
-      env:
-        DATABASE_URL: postgres://postgres@localhost:5432/postgres
-      
+        DATABASE_URL: postgres://postgres@localhost:5432/test_db
+      run: |
+        python manage.py migrate
+        python manage.py test shop.tests
