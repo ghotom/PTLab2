@@ -1,26 +1,55 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 <head>
-    <meta name="viewport" content="width=device-width" />
-    <title>Товары</title>
+    <meta charset="UTF-8">
+    <title>Магазин детских игрушек</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { color: #333; }
+        .product { margin: 20px 0; padding: 15px; border: 1px solid #ddd; border-radius: 8px; }
+        .old-price { text-decoration: line-through; color: #999; margin-right: 10px; }
+        .new-price { color: green; font-weight: bold; font-size: 1.2em; }
+        .promo-form { margin: 20px 0; }
+        .error { color: red; font-weight: bold; }
+    </style>
 </head>
 <body>
-    <div>
-        <h3>Список</h3>
-        <table>
-            <tr>
-                <td><p>Наименование</p></td>
-                <td><p>Цена</p></td>
-                <td></td>
-            </tr>
-            {% for p in products %}
-                <tr>
-                    <td><p>{{ p.name }}</p></td>
-                    <td><p>{{ p.price }}</p></td>
-                    <td><p><a href="/buy/{{ p.id }}">Купить</a></p></td>
-                </tr>
-            {% endfor %}
-        </table>
+    <h1>Магазин детских игрушек</h1>
+
+    {% if error_message %}
+        <p class="error">{{ error_message }}</p>
+    {% endif %}
+
+    {% if discount > 0 %}
+        <p style="color: green; font-size: 1.2em;">
+            Применена скидка {{ discount }}% по промокоду!
+        </p>
+    {% endif %}
+
+    <div class="promo-form">
+        <form method="get">
+            {{ form.as_p }}
+            <button type="submit">Применить промокод</button>
+        </form>
     </div>
+
+    <h2>Наши товары:</h2>
+    {% for product in products %}
+        <div class="product">
+            <h3>{{ product.name }}</h3>
+            <p>
+                {% if discount > 0 %}
+                    <span class="old-price">{{ product.price }} ₽</span>
+                    <span class="new-price">{{ product.discounted_price }} ₽</span>
+                    <br><small>(скидка {{ discount }}%)</small>
+                {% else %}
+                    <strong>{{ product.price }} ₽</strong>
+                {% endif %}
+            </p>
+            <a href="{% url 'buy' product.id %}">Купить</a>
+        </div>
+    {% empty %}
+        <p>Товаров пока нет.</p>
+    {% endfor %}
 </body>
 </html>
