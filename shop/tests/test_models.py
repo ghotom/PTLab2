@@ -18,14 +18,18 @@ class ProductModelTest(TestCase):
         self.assertIsInstance(bear.price, int)
 
     def test_product_data_correctness(self):
-        self.assertEqual(Product.objects.get(name="Конструктор LEGO").price, 2990)
-        self.assertEqual(Product.objects.get(name="Плюшевый мишка").price, 890)
+        self.assertEqual(Product.objects.get(
+            name="Конструктор LEGO").price, 2990)
+        self.assertEqual(Product.objects.get(
+            name="Плюшевый мишка").price, 890)
 
 
 class PromoCodeModelTest(TestCase):
     def setUp(self):
-        PromoCode.objects.create(code="TOY5", discount_percent=5, active=True)
-        PromoCode.objects.create(code="TOY15", discount_percent=15, active=False)
+        PromoCode.objects.create(
+            code="TOY5", discount_percent=5, active=True)
+        PromoCode.objects.create(
+            code="TOY15", discount_percent=15, active=False)
 
     def test_promo_code_str(self):
         promo = PromoCode.objects.get(code="TOY5")

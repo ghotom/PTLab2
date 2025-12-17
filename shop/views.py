@@ -4,13 +4,14 @@ from django.views.generic.edit import CreateView
 from .models import Product, Purchase, PromoCode
 from .forms import PromoCodeForm
 
+
 def index(request):
     products = Product.objects.all()
-    
+
     form = PromoCodeForm(request.GET or None)
     discount = 0
     error_message = None
-    
+
     if form.is_valid():
         code = form.cleaned_data.get('code')
         if code:

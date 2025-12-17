@@ -6,10 +6,14 @@ from shop.models import Product, PromoCode, Purchase
 class IndexViewTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.product1 = Product.objects.create(name="Машинка Hot Wheels", price=500)
-        self.product2 = Product.objects.create(name="Набор кубиков", price=1200)
-        PromoCode.objects.create(code="TOY10", discount_percent=10, active=True)
-        PromoCode.objects.create(code="OLD", discount_percent=15, active=False)
+        self.product1 = Product.objects.create(
+            name="Машинка", price=500)
+        self.product2 = Product.objects.create(
+            name="Кубики", price=1200)
+        PromoCode.objects.create(
+            code="TOY10", discount_percent=10, active=True)
+        PromoCode.objects.create(
+            code="OLD", discount_percent=15, active=False)
 
     def test_index_page_accessible(self):
         response = self.client.get(reverse('index'))
@@ -28,12 +32,12 @@ class IndexViewTest(TestCase):
         response = self.client.get(reverse('index'), {'code': 'TOY10'})
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Применена скидка 10%")
-        
+
         products = response.context['products']
         prices = [p.discounted_price for p in products]
         self.assertIn(450, prices)
         self.assertIn(1080, prices)
-        
+
         self.assertEqual(response.context['discount'], 10)
 
     def test_index_with_invalid_promo(self):
@@ -51,7 +55,8 @@ class IndexViewTest(TestCase):
 class PurchaseCreateViewTest(TestCase):
     def setUp(self):
         self.client = Client()
-        self.product = Product.objects.create(name="Пазл 1000 деталей", price=900)
+        self.product = Product.objects.create(name="Пазл 1000 деталей",
+                                              price=900)
         self.url = reverse('buy', args=[self.product.id])
 
     def test_purchase_page_accessible(self):
@@ -67,7 +72,7 @@ class PurchaseCreateViewTest(TestCase):
         response = self.client.post(self.url, data)
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Спасибо за покупку, Петров Пётр!")
-        
+
         self.assertEqual(Purchase.objects.count(), 1)
         purchase = Purchase.objects.first()
         self.assertEqual(purchase.person, "Петров Пётр")
